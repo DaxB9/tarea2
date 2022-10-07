@@ -1,0 +1,32 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  mysql:
+    image: mysql:latest
+    restart: always
+    ports:
+      - "3306:3306"
+    networks:
+      - arqui
+    volumes:
+      - ./sql/init.sql:/data/application/init.sql
+    command: --init-file /data/application/init.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root123
+  todo:
+    image: todo-app:1.0.3
+    volumes:
+      - C:/logs:/opt/arqui_software/logs
+    ports:
+      - "8080:8080"
+    networks:
+        - arqui
+    environment:
+      - HOST=mysql
+      - PORT=3306
+      - USERNAME=root
+      - PASSWORD=root123
+      - DATABASE=test
+    depends_on:
+      - mysql
+networks:
+  arqui:
